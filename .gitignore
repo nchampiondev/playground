@@ -1,25 +1,122 @@
-# Byte-compiled / cache files
-__pycache__/
-*.py[cod]
-*$py.class
+#####################
+# Global excludes   #
+#####################
 
-# Virtual environment
-venv/
-.env/
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.log
+*.tmp
 
-# Distribution / packaging
-build/
-dist/
-*.egg-info/
-
-# IDEs and editors
+# IDEs
 .vscode/
 .idea/
-*.swp
 *.sublime*
+*.code-workspace
 
-# Logs and misc
-*.log
+#####################
+# Python            #
+#####################
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.cover
+*.env
+*.venv
+venv/
+ENV/
+env/
+pip-wheel-metadata/
+*.egg
+*.egg-info/
+dist/
+build/
 *.sqlite3
-.DS_Store
+
+#####################
+# Java              #
+#####################
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+*.log
+*.javadoc
+hs_err_pid*
+target/
+out/
+bin/
+
+#####################
+# PHP               #
+#####################
+vendor/
+composer.lock
+composer.phar
+*.log
+*.cache
+*.tmp
+.phpunit.result.cache
+.php_cs.cache
+
+#####################
+# C# / .NET         #
+#####################
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.user
+*.suo
+*.csproj.user
+*.vspscc
+*.vssscc
+.vs/
+_ReSharper*/
+*.nupkg
+packages/
+TestResults/
+*.dbmdl
+*.bak
+*.Backup
+
+#####################
+# Go                #
+#####################
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Go modules
+vendor/
+*.mod
+*.sum
+go.sum
+go.work.sum
+
+# Go build output
+bin/
+build/
+*.out
+
+#####################
+# Misc              #
+#####################
+coverage/
+node_modules/
+*.lock
+.npm/
+.cache/
+*.tgz
 
