@@ -59,6 +59,13 @@ class ProductParser:
             name = name_elem.get_text(strip=True)
             if not name:
                 return None
+
+            # Extract specs from sublabel
+            sublabel_elem = element.select_one('.product__sublabel')
+            sublabel = None
+            if sublabel_elem:
+                sublabel_text = sublabel_elem.get_text(strip=True)
+                gpu_ram = self.extract_memory(sublabel_text)
             
             # Extract price
             price_elem = element.select_one('.product__price')
@@ -83,7 +90,8 @@ class ProductParser:
                 'raw_name': name,
                 'price': price,
                 'url': product_url,
-                'availability': availability
+                'availability': availability,
+                'gpu_ram': gpu_ram
             }
             
         except Exception as e:
@@ -139,4 +147,18 @@ class ProductParser:
                 break
         
         return brand, model
+
+    def extract_memory(self, text: str) -> str | None:
+        """
+        Extract memory size like '16 Go', '8GB', '12 gb' etc. from product label.
+        Returns the matched string or None if not found.
+        """
+        pattern = re.compile(r"(\d+)\s*(gb|go)", re.IGNORECASE)
+        match = pattern.search(text)
+        if match:
+            # Normalize: number + GB
+            number = match.group(1)
+            unit = match.group(2).upper()
+            return f"{number}GB"
+        return None
 

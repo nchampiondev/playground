@@ -26,6 +26,7 @@ class DataStorage:
 
             # Generate slug
             slug = re.sub(r"[^\w\s-]", "", product_data["name"].lower())
+            slug = f"{slug}-{product_data["gpu_ram"].lower()}"
             slug = re.sub(r"[\s_-]+", "-", slug).strip("-")
 
             # Build product model
@@ -35,7 +36,9 @@ class DataStorage:
                 category="gpu",
                 brand=brand,
                 model=model,
-                specifications={}
+                specifications={
+                    'gpu_ram': product_data["gpu_ram"]
+                }
             )
 
             # Insert or update product
