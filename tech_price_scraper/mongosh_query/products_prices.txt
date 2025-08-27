@@ -1,0 +1,23 @@
+---find a sample of product that appears multiple times in the prices collection
+
+db.prices.aggregate([ 
+    { $group: { _id: "$product_id", count: { $sum: 1 } } }, 
+    { $match: { count: { $gt: 1 } } }, 
+    { $sample: { size: 5 } } 
+])
+
+---find all products with same slug
+
+db.products.aggregate([ 
+    { $group: { _id: "$slug", count: { $sum: 1 }, products: { $push: "$$ROOT" } } }, 
+    { $match: { count: { $gt: 1 } } }, 
+    { $project: { slug: "$_id", count: 1, products: 1, _id: 0 } } 
+])
+
+---count all products
+
+db.products.countDocuments()
+
+---count distinct based on key (example slug)
+
+db.products.distinct("slug").length

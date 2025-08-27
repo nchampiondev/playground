@@ -71,12 +71,14 @@ class TopAchatScraper(BaseScraper):
             
             for page in range(1, max_pages + 1):
                 logger.info(f"Scraping TopAchat GPU page {page}")
+
+                base_url_nohtml = base_url.rstrip(".html")
                 
                 # Build page URL
                 if page == 1:
                     page_url = base_url
                 else:
-                    page_url = f"{base_url}?page={page}"
+                    page_url = f"{base_url_nohtml}_puis_page_est_{page}.html"
                 
                 # Fetch page
                 response = self.web_client.get(page_url)
