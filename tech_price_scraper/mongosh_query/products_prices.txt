@@ -21,3 +21,30 @@ db.products.countDocuments()
 ---count distinct based on key (example slug)
 
 db.products.distinct("slug").length
+
+---query to find the 5 minimum price for products with a given value for gpu_ram
+
+db.prices.aggregate([ 
+    { $lookup: { from: "products", localField: "product_id", foreignField: "_id", as: "product" } }, 
+    { $unwind: "$product" }, 
+    { $match: { "product.specifications.gpu_ram": "16GB" } }, 
+    { $group: { _id: "$product._id", name: { $first: "$product.name" }, minPrice: { $min: "$price" } } }, 
+    { $sort: { minPrice: 1 } },
+    { $limit: 5 } 
+])
+
+
+---query to find the 5 maximum price for products with a given value for gpu_ram
+
+db.prices.aggregate([ 
+    { $lookup: { from: "products", localField: "product_id", foreignField: "_id", as: "product" } }, 
+    { $unwind: "$product" }, 
+    { $match: { "product.specifications.gpu_ram": "16GB" } }, 
+    { $group: { _id: "$product._id", name: { $first: "$product.name" }, maxPrice: { $max: "$price" } } }, 
+    { $sort: { maxPrice: -1 } },
+    { $limit: 5 } 
+])
+
+---query to find products with name containing a substring
+
+db.products.find({ name: { $regex: "Ventus 3X", $options: "i" } })
