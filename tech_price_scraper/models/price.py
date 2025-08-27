@@ -1,18 +1,15 @@
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Optional, Dict, Any
-from pydantic import BaseModel, Field, validator
-from bson import ObjectId
-
-from models.base import PyObjectId
+from pydantic import BaseModel, Field
 
 
 class Price(BaseModel):
     """Price model for storing price history"""
-    
-    id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
-    product_id: PyObjectId
-    website_id: PyObjectId
-    
+
+    id: Optional[str] = Field(default=None, alias="_id")
+    product_id: str   # store IDs as str
+    website_id: str
+
     price: float
     currency: str = "EUR"
     product_url: str
@@ -20,27 +17,11 @@ class Price(BaseModel):
     condition: str = "new"  # new, used, refurbished, open_box
     shipping_cost: Optional[float] = None
     seller: Optional[str] = None
-    
+
     # Metadata
-    scraped_at: datetime = Field(default_factory=datetime.utcnow)
+    scraped_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     scraper_version: str = "1.0.0"
     raw_data: Dict[str, Any] = Field(default_factory=dict)
-    
-    @validator('price')
-    def price_must_be_positive(cls, v):
-        if v <= 0:
-            raise ValueError('Price must be positive')
-        return v
-    
-    @validator('availability')
-    def validate_availability(cls, v):
-        valid_statuses = ['in_stock', 'out_of_stock', 'limited', 'pre_order', 'unknown']
-        if v not in valid_statuses:
-            raise ValueError(f'Availability must be one of: {valid_statuses}')
-        return v
-    
-    class Config:
-        validate_by_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
 
+    class Config:
+        populate_by_name = True

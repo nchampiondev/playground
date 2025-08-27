@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class WebClient:
     """HTTP client for web scraping with rate limiting and error handling"""
     
-    def __init__(self, rate_limit_ms: int = 1000, max_retries: int = 3):
+    def __init__(self, rate_limit_ms: int = 5000, max_retries: int = 3):
         self.session = requests.Session()
         self.rate_limit_ms = rate_limit_ms
         self.max_retries = max_retries
@@ -43,7 +43,7 @@ class WebClient:
                 if attempt < self.max_retries - 1:
                     time.sleep(2 ** attempt)  # Exponential backoff
                 else:
-                    logger.error(f"All retries failed for: {url}")
+                    logger.exception(f"All retries failed for: {url}")
                     return None
         
         return None

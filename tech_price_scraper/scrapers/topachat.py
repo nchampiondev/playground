@@ -1,6 +1,6 @@
 import time
 import logging
-from datetime import datetime
+from datetime import datetime, UTC
 
 from models import Website
 from database.operations import DatabaseOperations
@@ -21,7 +21,7 @@ class TopAchatScraper(BaseScraper):
         self.db_ops = db_operations
         
         # Initialize components
-        self.web_client = WebClient(rate_limit_ms=1000, max_retries=3)
+        self.web_client = WebClient(rate_limit_ms=5000, max_retries=3)
         self.parser = ProductParser()
         self.storage = DataStorage(db_operations)
         
@@ -38,7 +38,7 @@ class TopAchatScraper(BaseScraper):
             currency="EUR",
             scraping_config={
                 "base_gpu_url": "https://www.topachat.com/pages/produits_cat_est_micro_puis_rubrique_est_wgfx_pcie.html",
-                "rate_limit_ms": 1000,
+                "rate_limit_ms": 5000,
                 "max_retries": 3,
                 "selectors": {
                     "product_container": ".product-item, .article",
@@ -82,7 +82,7 @@ class TopAchatScraper(BaseScraper):
                 response = self.web_client.get(page_url)
                 if not response:
                     error_msg = f"Failed to fetch page {page}"
-                    logger.error(error_msg)
+                    logger.exception(error_msg)
                     result.errors.append(error_msg)
                     continue
                 
@@ -113,14 +113,14 @@ class TopAchatScraper(BaseScraper):
                     
                     except Exception as e:
                         error_msg = f"Error processing product {product_data.get('name', 'unknown')}: {e}"
-                        logger.error(error_msg)
+                        logger.exception(error_msg)
                         result.errors.append(error_msg)
             
             result.success = True
             
         except Exception as e:
             error_msg = f"Scraping failed: {e}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             result.errors.append(error_msg)
         
         finally:
@@ -129,7 +129,7 @@ class TopAchatScraper(BaseScraper):
             # Update website last_scraped
             self.db_ops.websites.update_one(
                 {"_id": self.website.id},
-                {"$set": {"last_scraped": datetime.utcnow()}}
+                {"$set": {"last_scraped": datetime.now(UTC)}}
             )
             
             # Close web client

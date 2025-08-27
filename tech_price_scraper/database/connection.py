@@ -39,7 +39,7 @@ class DatabaseManager:
             
             logger.info("Database indexes created successfully")
         except Exception as e:
-            logger.error(f"Error creating indexes: {e}")
+            logger.exception(f"Error creating indexes: {e}")
     
     def close(self):
         """Close database connection"""

@@ -18,18 +18,14 @@ class ProductParser:
     
     def parse_topachat_listings(self, html: str, page_url: str) -> List[Dict]:
         """Parse product listings from TopAchat HTML"""
+        #logger.info(html)
         soup = BeautifulSoup(html, 'html.parser')
         products = []
-        
         # Try different selectors for product containers
         selectors_to_try = [
-            '.grille-produit .art',
-            '.product-item',
-            '.article',
-            '.art-wrap',
-            '.product-wrap'
+            '.product-list__product-wrapper'
         ]
-        
+
         product_elements = []
         for selector in selectors_to_try:
             product_elements = soup.select(selector)
@@ -38,9 +34,8 @@ class ProductParser:
                 break
         
         if not product_elements:
-            # Fallback: look for common patterns in the text
-            logger.warning("No products found with standard selectors, trying text parsing")
-            return self._parse_from_text(html)
+            logger.warning("No products found with standard selectors")
+            return products
         
         for element in product_elements:
             try:
@@ -57,7 +52,7 @@ class ProductParser:
         """Extract product data from a product element"""
         try:
             # Extract name
-            name_elem = element.select_one('.art-name, .product-title, h3, .title')
+            name_elem = element.select_one('.product__label')
             if not name_elem:
                 return None
             
@@ -66,7 +61,7 @@ class ProductParser:
                 return None
             
             # Extract price
-            price_elem = element.select_one('.art-price, .price, .prix')
+            price_elem = element.select_one('.product__price')
             price = None
             if price_elem:
                 price_text = price_elem.get_text(strip=True)
@@ -108,66 +103,6 @@ class ProductParser:
                 return 'pre_order'
         
         return 'unknown'
-    
-    def _parse_from_text(self, html: str) -> List[Dict]:
-        """Fallback method to parse products from raw text"""
-        products = []
-        
-        # Look for GPU patterns in the text
-        gpu_pattern = r'(GeForce\s+RTX?\s+\d+(?:\s+[A-Z]+)?|Radeon\s+RX?\s+\d+(?:\s+[A-Z]+)?)'
-        price_pattern = r'(\d+[.,]\d+)\s*€'
-        
-        soup = BeautifulSoup(html, 'html.parser')
-        text_content = soup.get_text()
-        
-        lines = text_content.split('\n')
-        current_product = {}
-        
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-            
-            # Look for GPU names
-            gpu_match = re.search(gpu_pattern, line, re.IGNORECASE)
-            if gpu_match:
-                if current_product:
-                    products.append(current_product)
-                
-                current_product = {
-                    'name': line.strip(),
-                    'raw_name': line.strip(),
-                    'url': '',
-                    'availability': 'unknown'
-                }
-            
-            # Look for prices
-            price_match = re.search(price_pattern, line)
-            if price_match and current_product:
-                price_str = price_match.group(1).replace(',', '.')
-                current_product['price'] = float(price_str)
-            
-            # Look for availability indicators
-            availability_keywords = {
-                'disponible': 'in_stock',
-                'en stock': 'in_stock',
-                'dispo': 'in_stock',
-                'rupture': 'out_of_stock',
-                'épuisé': 'out_of_stock',
-                'précommande': 'pre_order'
-            }
-            
-            for keyword, status in availability_keywords.items():
-                if keyword.lower() in line.lower() and current_product:
-                    current_product['availability'] = status
-                    break
-        
-        # Add the last product
-        if current_product:
-            products.append(current_product)
-        
-        logger.info(f"Parsed {len(products)} products from text")
-        return products
     
     def _is_gpu_product(self, name: str) -> bool:
         """Check if product name indicates it's a GPU"""

@@ -5,7 +5,7 @@ Scrapes GPU prices from various websites and stores them in MongoDB
 """
 
 import sys
-from datetime import datetime
+from datetime import datetime, UTC
 
 from utils.logging import setup_logging
 from database import DatabaseManager, DatabaseOperations
@@ -34,7 +34,7 @@ def main():
         display_results(result, db_manager)
         
     except Exception as e:
-        logger.error(f"Main execution failed: {e}")
+        logger.exception(f"Main execution failed: {e}")
         sys.exit(1)
     
     finally:
@@ -82,14 +82,14 @@ def display_results(result, db_manager):
         for product in recent_products:
             best_price = product.get('current_best_price', {})
             price_info = f"{best_price.get('price', 'N/A')} {best_price.get('currency', '')}"
-            print(f"• {product['name'][:50]}...")
+            print(f"~ {product['name'][:50]}...")
             print(f"  Brand: {product['brand']} | Model: {product['model']} | Price: {price_info}")
             print()
     
     # Show database statistics
     total_prices = db_manager.prices.count_documents({})
     today_prices = db_manager.prices.count_documents({
-        "scraped_at": {"$gte": datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)}
+        "scraped_at": {"$gte": datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0)}
     })
     
     print(f"Database Statistics:")
@@ -113,8 +113,8 @@ def test_database():
             "category": "gpu",
             "brand": "test",
             "model": "test-model",
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
+            "created_at": datetime.now(UTC),
+            "updated_at": datetime.now(UTC)
         }
         
         result = db_manager.products.insert_one(test_product)
@@ -125,12 +125,12 @@ def test_database():
         logger.info("Test cleanup successful")
         
         db_manager.close()
-        print("✓ Database connection test passed!")
+        print("Database connection test passed!")
         return True
         
     except Exception as e:
-        logger.error(f"Database test failed: {e}")
-        print(f"✗ Database connection test failed: {e}")
+        logger.exception(f"Database test failed: {e}")
+        print(f"Database connection test failed: {e}")
         return False
 
 
