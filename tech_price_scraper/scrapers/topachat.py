@@ -1,10 +1,9 @@
 import time
 import logging
 from datetime import datetime, UTC
-
-from models import Website
+from models import Website, ScrapingResult
 from database.operations import DatabaseOperations
-from scrapers.base_scraper import BaseScraper, ScrapingResult
+from scrapers.base_scraper import BaseScraper
 from scrapers.web_client import WebClient
 from scrapers.parser import ProductParser
 from scrapers.storage import DataStorage
@@ -47,7 +46,8 @@ class TopAchatScraper(BaseScraper):
                     "availability": ".stock, .dispo",
                     "link": "a"
                 }
-            }
+            },
+            created_at=datetime.now(UTC)
         )
         
         website_id = self.db_ops.insert_website(website_config)

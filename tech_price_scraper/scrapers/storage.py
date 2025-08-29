@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 import logging
 import re
-
+from datetime import datetime, UTC
 from models import Product, Price
 from database.operations import DatabaseOperations
 
@@ -54,7 +54,7 @@ class DataStorage:
                 currency="EUR",
                 product_url=product_data.get("url", ""),
                 availability=product_data.get("availability", "unknown"),
-                raw_data=product_data
+                scraped_at=datetime.now(UTC)
             )
 
             price_id: str = self.db_ops.insert_price(price)

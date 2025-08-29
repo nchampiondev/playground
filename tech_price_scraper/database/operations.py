@@ -1,5 +1,6 @@
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
+from pymongo import ReturnDocument
 from typing import List, Dict, Optional
 from datetime import datetime, timedelta, UTC
 import logging
@@ -44,19 +45,24 @@ class DatabaseOperations:
     # --- Product operations ---
     def insert_or_update_product(self, product: Product) -> str:
         try:
-            product.updated_at = datetime.now(UTC)
-            product_dict = product.dict(by_alias=True, exclude_unset=True)
+            now = datetime.now(UTC)
 
-            existing = self.products.find_one({"slug": product.slug})
-            if existing:
-                self.products.update_one(
-                    {"_id": existing["_id"]},
-                    {"$set": {k: v for k, v in product_dict.items() if k != "_id"}}
-                )
-                return str(existing["_id"])
-            else:
-                result = self.products.insert_one(product_dict)
-                return str(result.inserted_id)
+            product_dict = product.dict(by_alias=True, exclude_unset=True)
+            product_dict.pop("created_at", None)
+            product_dict.pop("updated_at", None)
+
+            doc = self.products.find_one_and_update(
+                {"slug": product.slug},
+                {
+                    "$setOnInsert": {"created_at": now},
+                    "$set": {**product_dict, "updated_at": now},
+                },
+                upsert=True,
+                return_document=ReturnDocument.AFTER,
+                projection={"_id": 1}
+            )
+
+            return str(doc["_id"])
 
         except Exception as e:
             logger.exception(f"Error inserting/updating product {product.name}: {e}")

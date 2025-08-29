@@ -87,7 +87,6 @@ class ProductParser:
             
             return {
                 'name': name,
-                'raw_name': name,
                 'price': price,
                 'url': product_url,
                 'availability': availability,
