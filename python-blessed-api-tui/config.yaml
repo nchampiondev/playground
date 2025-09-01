@@ -1,0 +1,20 @@
+endpoints:
+  - name: Products by Brand nvidia
+    method: GET
+    url: http://localhost:8080/api/products/brand/nvidia
+    params: {}
+
+  - name: Products by Brand amd
+    method: GET
+    url: http://localhost:8080/api/products/brand/amd
+    params: {}
+
+  - name: Products by Model 5060-ti
+    method: GET
+    url: http://localhost:8080/api/products/model/5060-ti
+    params: {}
+
+  - name: Products by Model 5090
+    method: GET
+    url: http://localhost:8080/api/products/model/5090
+    params: {}
