@@ -1,7 +1,9 @@
+import json
 from blessed import Terminal
 from menu import Menu
 from http_client import HttpClient
 from utils import Formatter
+from scrollbox import ScrollableBox
 
 class UIManager:
     def __init__(self, configs: list[dict]):
@@ -12,13 +14,16 @@ class UIManager:
 
     def run(self):
         with self.term.fullscreen():
-            main_menu = Menu(self.term, "API Manager", ["Manual Entry", "From Config"])
-            choice = main_menu.run()
+            while True:  # loop so user can make multiple requests
+                main_menu = Menu(self.term, "API Manager", ["Manual Entry", "From Config", "Quit"])
+                choice = main_menu.run()
 
-            if choice == 0:
-                self._manual_entry()
-            elif choice == 1 and self.configs:
-                self._from_config()
+                if choice == 0:
+                    self._manual_entry()
+                elif choice == 1 and self.configs:
+                    self._from_config()
+                elif choice == 2:
+                    break
 
     def _manual_entry(self):
         print(self.term.clear)
@@ -26,19 +31,25 @@ class UIManager:
         method = input("HTTP Method (only GET supported): ").upper()
         if method != "GET":
             print(self.term.bright_black("Only GET is supported."))
+            input("\nPress Enter to return...")
             return
         url = input("URL: ")
         params = input("Query params (key=value&...): ")
         param_dict = dict(p.split("=") for p in params.split("&")) if params else {}
         result = self.http.get(url, param_dict)
-        print(self.formatter.pretty_json(result))
-        input("\nPress Enter to return...")
+        self._show_result(result)
 
     def _from_config(self):
         options = [ep["name"] for ep in self.configs]
         menu = Menu(self.term, "Choose Endpoint", options)
         idx = menu.run()
         selected = self.configs[idx]
-        result = self.http.get(selected["url"], selected.get("params"))
-        print(self.formatter.pretty_json(result))
-        input("\nPress Enter to return...")
+        url = selected["url"].format(**selected.get("params", {}))
+        result = self.http.get(url, selected.get("params"))
+        self._show_result(result)
+
+    def _show_result(self, result: dict):
+        # Format JSON into greyscale lines
+        formatted = self.formatter.pretty_json(result).splitlines()
+        scrollbox = ScrollableBox(self.term, formatted)
+        scrollbox.run()
