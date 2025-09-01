@@ -1,4 +1,3 @@
-import json
 from blessed import Terminal
 from menu import Menu
 from http_client import HttpClient
@@ -14,16 +13,16 @@ class UIManager:
 
     def run(self):
         with self.term.fullscreen():
-            while True:  # loop so user can make multiple requests
+            while True:
                 main_menu = Menu(self.term, "API Manager", ["Manual Entry", "From Config", "Quit"])
                 choice = main_menu.run()
 
-                if choice == 0:
+                if choice is None or choice == 2:  # q pressed or Quit option
+                    break
+                elif choice == 0:
                     self._manual_entry()
                 elif choice == 1 and self.configs:
                     self._from_config()
-                elif choice == 2:
-                    break
 
     def _manual_entry(self):
         print(self.term.clear)
@@ -43,13 +42,14 @@ class UIManager:
         options = [ep["name"] for ep in self.configs]
         menu = Menu(self.term, "Choose Endpoint", options)
         idx = menu.run()
+        if idx is None:  # user pressed q
+            return
         selected = self.configs[idx]
         url = selected["url"].format(**selected.get("params", {}))
         result = self.http.get(url, selected.get("params"))
         self._show_result(result)
 
     def _show_result(self, result: dict):
-        # Format JSON into greyscale lines
         formatted = self.formatter.pretty_json(result).splitlines()
         scrollbox = ScrollableBox(self.term, formatted)
         scrollbox.run()

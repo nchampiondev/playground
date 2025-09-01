@@ -1,8 +1,9 @@
 from blessed import Terminal
+from base_screen import BaseScreen
 
-class Menu:
+class Menu(BaseScreen):
     def __init__(self, term: Terminal, title: str, options: list[str]):
-        self.term = term
+        super().__init__(term)
         self.title = title
         self.options = options
         self.index = 0
@@ -17,6 +18,9 @@ class Menu:
                         print(self.term.reverse(opt))  # selected
                     else:
                         print(self.term.bright_black(opt))
+
+                self.draw_footer()  # <-- common footer
+
                 key = self.term.inkey()
                 if key.name == "KEY_UP":
                     self.index = (self.index - 1) % len(self.options)
@@ -24,3 +28,5 @@ class Menu:
                     self.index = (self.index + 1) % len(self.options)
                 elif key.name in ("KEY_ENTER", "ENTER"):
                     return self.index
+                elif key.lower() == "q":
+                    return None
