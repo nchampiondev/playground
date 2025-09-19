@@ -30,10 +30,8 @@ public class Price {
     @Field("scraped_at")
     private Instant scrapedAt;
 
-    // --- Getters & Setters ---
-
     public ObjectId getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(ObjectId id) {
@@ -41,7 +39,7 @@ public class Price {
     }
 
     public ObjectId getProductId() {
-        return productId;
+        return this.productId;
     }
 
     public void setProductId(ObjectId productId) {
@@ -49,7 +47,7 @@ public class Price {
     }
 
     public ObjectId getWebsiteId() {
-        return websiteId;
+        return this.websiteId;
     }
 
     public void setWebsiteId(ObjectId websiteId) {
@@ -57,7 +55,7 @@ public class Price {
     }
 
     public Double getPrice() {
-        return price;
+        return this.price;
     }
 
     public void setPrice(Double price) {
@@ -65,7 +63,7 @@ public class Price {
     }
 
     public String getCurrency() {
-        return currency;
+        return this.currency;
     }
 
     public void setCurrency(String currency) {
@@ -73,7 +71,7 @@ public class Price {
     }
 
     public String getProductUrl() {
-        return productUrl;
+        return this.productUrl;
     }
 
     public void setProductUrl(String productUrl) {
@@ -81,7 +79,7 @@ public class Price {
     }
 
     public String getAvailability() {
-        return availability;
+        return this.availability;
     }
 
     public void setAvailability(String availability) {
@@ -89,7 +87,7 @@ public class Price {
     }
 
     public Instant getScrapedAt() {
-        return scrapedAt;
+        return this.scrapedAt;
     }
 
     public void setScrapedAt(Instant scrapedAt) {

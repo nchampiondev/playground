@@ -28,10 +28,8 @@ public class Product {
     @Field("updated_at")
     private Instant updatedAt;
 
-    // --- Getters & Setters ---
-
     public ObjectId getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(ObjectId id) {
@@ -39,7 +37,7 @@ public class Product {
     }
 
     public String getSlug() {
-        return slug;
+        return this.slug;
     }
 
     public void setSlug(String slug) {
@@ -47,7 +45,7 @@ public class Product {
     }
 
     public String getBrand() {
-        return brand;
+        return this.brand;
     }
 
     public void setBrand(String brand) {
@@ -55,7 +53,7 @@ public class Product {
     }
 
     public String getCategory() {
-        return category;
+        return this.category;
     }
 
     public void setCategory(String category) {
@@ -63,7 +61,7 @@ public class Product {
     }
 
     public String getModel() {
-        return model;
+        return this.model;
     }
 
     public void setModel(String model) {
@@ -71,7 +69,7 @@ public class Product {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -79,7 +77,7 @@ public class Product {
     }
 
     public Map<String, String> getSpecifications() {
-        return specifications;
+        return this.specifications;
     }
 
     public void setSpecifications(Map<String, String> specifications) {
@@ -87,7 +85,7 @@ public class Product {
     }
 
     public Instant getCreatedAt() {
-        return createdAt;
+        return this.createdAt;
     }
 
     public void setCreatedAt(Instant createdAt) {
@@ -95,7 +93,7 @@ public class Product {
     }
 
     public Instant getUpdatedAt() {
-        return updatedAt;
+        return this.updatedAt;
     }
 
     public void setUpdatedAt(Instant updatedAt) {

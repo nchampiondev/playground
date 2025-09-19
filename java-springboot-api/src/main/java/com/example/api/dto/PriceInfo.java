@@ -11,8 +11,7 @@ public class PriceInfo {
         this.availability = availability;
     }
 
-    // Getters
-    public Double getPrice() { return price; }
-    public String getCurrency() { return currency; }
-    public String getAvailability() { return availability; }
+    public Double getPrice() { return this.price; }
+    public String getCurrency() { return this.currency; }
+    public String getAvailability() { return this.availability; }
 }

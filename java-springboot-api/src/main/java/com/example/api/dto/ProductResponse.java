@@ -23,10 +23,9 @@ public class ProductResponse {
                 .collect(Collectors.toList());
     }
 
-    // Getters
-    public String getName() { return name; }
-    public String getBrand() { return brand; }
-    public String getModel() { return model; }
-    public Object getSpecifications() { return specifications; }
-    public List<PriceInfo> getPrices() { return prices; }
+    public String getName() { return this.name; }
+    public String getBrand() { return this.brand; }
+    public String getModel() { return this.model; }
+    public Object getSpecifications() { return this.specifications; }
+    public List<PriceInfo> getPrices() { return this.prices; }
 }
